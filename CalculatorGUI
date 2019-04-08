@@ -1,0 +1,125 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class CalculatorGUI extends JFrame {
+
+	// Routine Service Part
+	public final double OIL_CHANGE = 35.00, LUBE_JOB = 25.00, RADIATOR_FLUSH = 50.00, 
+			TRANSMISSION_FLUSH = 120.00, INSPECTION = 35.00, MUFFLER_REPLACEMENT = 200.00, TIRE_ROTATION = 20.00;
+
+	private JCheckBox oilChange, lubeJob, radiatorFlush, transmissionFlush, inspection, mufflerReplacement, tireRotation;
+
+	// Non-Routine Service Part
+	public final double CHARGE_PER_HOUR = 60.00; 
+	private JLabel partsChangesLabel, laborLabel;
+	private JTextField partsChangesTextField, laborTextField;
+
+	// Main Part
+	private JPanel routineService, nonRoutineService, buttonPanel;
+	private JButton calcButton;
+
+	public CalculatorGUI() {
+		super("Joe's Automotive");
+		buttonPanel = new JPanel();
+		routineService = new JPanel();
+		nonRoutineService = new JPanel();
+
+		setLayout(new BorderLayout());
+
+		// Routine Service Part
+		routineService.setLayout(new GridLayout(7, 1));
+
+		oilChange = new JCheckBox("Oil Change ($35.00)");
+		lubeJob = new JCheckBox("Lube Job ($25.00)");
+		radiatorFlush = new JCheckBox("Radiator Flush ($50.00)");
+		transmissionFlush = new JCheckBox("Transmission Flush ($120.00)");
+		inspection = new JCheckBox("Inspection ($35.00)");
+		mufflerReplacement = new JCheckBox("Muffler Replacement ($200.00)");
+		tireRotation = new JCheckBox("Tire Rotation ($20.00)");
+
+		routineService.setBorder(BorderFactory.createTitledBorder("Routine Service"));
+
+		routineService.add(oilChange);
+		routineService.add(lubeJob);
+		routineService.add(radiatorFlush);
+		routineService.add(transmissionFlush);
+		routineService.add(inspection);
+		routineService.add(mufflerReplacement);
+		routineService.add(tireRotation);
+
+		// Non-Routine Service Part
+		partsChangesLabel = new JLabel("Parts Charges:");
+		partsChangesTextField = new JTextField(10);
+		partsChangesTextField.setText("0.0");
+
+		laborLabel = new JLabel("Hours of Labor:");
+		laborTextField = new JTextField(10);
+		laborTextField.setText("0.0");
+
+		nonRoutineService.setBorder(BorderFactory.createTitledBorder("Non-Routine Service"));
+
+		nonRoutineService.add(partsChangesLabel);
+		nonRoutineService.add(partsChangesTextField);
+		nonRoutineService.add(laborLabel);
+		nonRoutineService.add(laborTextField);
+
+		nonRoutineService.setLayout(new GridLayout(2, 2));
+
+		// Main Part
+		calcButton = new JButton("Calculate Changes");
+		calcButton.addActionListener(new CalcButtonListener());
+		buttonPanel.add(calcButton);
+
+		add(routineService, BorderLayout.NORTH);
+		add(nonRoutineService, BorderLayout.CENTER);
+		add(buttonPanel, BorderLayout.SOUTH);
+		pack();
+		setVisible(true);
+	}
+
+	// CalcButton Listener
+	private class CalcButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			double total;
+			total = getRoutineServicesCost() + getNonRoutineServicesCost();
+			String.format("Total: $%.2f", total);
+			JOptionPane.showMessageDialog(null, String.format("Total: $%.2f", total));
+		}
+	}
+
+	public double getRoutineServicesCost() {
+		double total = 0;
+		if (oilChange.isSelected())
+			total = total + OIL_CHANGE;
+		if (lubeJob.isSelected())
+			total = total + LUBE_JOB;
+		if (radiatorFlush.isSelected())
+			total = total + RADIATOR_FLUSH;
+		if (transmissionFlush.isSelected())
+			total = total + TRANSMISSION_FLUSH;
+		if (inspection.isSelected())
+			total = total + INSPECTION;
+		if (mufflerReplacement.isSelected())
+			total = total + MUFFLER_REPLACEMENT;
+		if (tireRotation.isSelected())
+			total = total + TIRE_ROTATION;
+		return total;
+	}
+
+	public double getNonRoutineServicesCost() {
+
+		double total = 0.0;
+		try {
+			double hoursOfLabor = Double.parseDouble(laborTextField.getText());
+			total = hoursOfLabor * CHARGE_PER_HOUR;
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		return total;
+	}
+
+	public static void main(String[] args) {
+		new CalculatorGUI();
+	}
+}
